@@ -44,18 +44,37 @@ class MainActivity : AppCompatActivity() {
         val listView = findViewById<ListView>(R.id.list_view)
         listView.adapter = UserAdapter(items)
 
+//        listView.setOnItemClickListener { parent, view, position, id ->
+//            // Get the clicked item's text
+//            val selectedItem = parent.getItemAtPosition(position) as UserModel
+//
+//            // Create an Intent to start the DetailActivity
+//            val intent = Intent(this@MainActivity, DetailActivity::class.java)
+//
+//            // Pass data to the DetailActivity
+//            intent.putExtra("detail_user", selectedItem)
+//
+//            // Start the DetailActivity
+//            startActivity(intent)
+//        }
+
         listView.setOnItemClickListener { parent, view, position, id ->
             // Get the clicked item's text
             val selectedItem = parent.getItemAtPosition(position) as UserModel
 
-            // Create an Intent to start the DetailActivity
-            val intent = Intent(this@MainActivity, DetailActivity::class.java)
+            // Create a Bundle to pass data to the DetailFragment
+            val bundle = Bundle()
+            bundle.putParcelable("detail_user", selectedItem)
 
-            // Pass data to the DetailActivity
-            intent.putExtra("detail_user", selectedItem)
+            // Create a DetailFragment instance and set its arguments
+            val detailFragment = DetailFragment()
+            detailFragment.arguments = bundle
 
-            // Start the DetailActivity
-            startActivity(intent)
+            // Replace the existing fragment with the DetailFragment
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, detailFragment)
+                .addToBackStack(null) // Optional: Add to back stack for fragment navigation
+                .commit()
         }
 
         registerForContextMenu(findViewById(R.id.list_view))
@@ -70,6 +89,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreateContextMenu(menu, v, menuInfo)
 
         menuInflater.inflate(R.menu.sub_menu, menu)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_settings) {
+            Log.v("TAG", "Setting")
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 
